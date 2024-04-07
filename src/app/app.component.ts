@@ -14,21 +14,34 @@ export class AppComponent implements OnInit {
 
   @ViewChild('canvas')
   canvas: HTMLCanvasElement;
-
+  loadText = '';
   batAsset: any;
 
   ngOnInit(): void {
-    this.webGLCheck();
+    // Object Loader
+
+    const loader = new GLTFLoader();
+
+    // Asyncronous asset loader with progress event as first argument
+    loader.loadAsync("assets\\bat_mki.glb", () => {
+      this.loadText = 'LOADING!';
+    }).then((gltf) => {
+      this.batAsset = gltf.scene;
+    }).catch((error) => {
+      this.loadText = error
+      console.log("asset load error: " + error);
+    }).finally(() => {
+      this.loadText = '';
+      this.webGLCheck();
+    });
   }
 
   webGLCheck(): any {
     try {
-      let canvas = <HTMLCanvasElement>document.getElementById('canvas');
-      !!window.WebGL2RenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
-      canvas = null;
+      !!window.WebGL2RenderingContext
     } catch (e) {
       console.log(e);
-      return false;      
+      return false;
     }
     this.createThreejsBox();
   }
@@ -40,38 +53,42 @@ export class AppComponent implements OnInit {
 
     const material = new THREE.MeshToonMaterial();
 
-    // Object Loader
-
-    const loader = new GLTFLoader();
-
-    loader.load("assets\\bat_mki.glb", function ( gltf ) {
-      this.batAsset = gltf.scene;
-    
-    }, undefined, function ( error ) {
-      console.error( error );
-    
-    } );    
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0x00FFFF, 0.3);
     scene.add(ambientLight);
 
-    const pointLight = new THREE.PointLight(0xffffff, 0.5);
+    const pointLight = new THREE.PointLight(0xff00ff, 0.5);
     pointLight.position.x = 2;
     pointLight.position.y = 2;
     pointLight.position.z = 2;
     scene.add(pointLight);
 
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(1.5, 1.5, 1.5),
+    this.batAsset.position.x = -60;
+    this.batAsset.position.y = -8;
+
+    const sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 28, 28),
       material
     );
+
+    sphere.position.setY(36);
+
+    // Lovely meshInstance for loop
+    // for (let i = 0; i < sphere.count; i++) {
+
+    //   let x = Math.floor(Math.random() * 90) - 45;
+    //   let y = 36;
+
+    //   let matrix = new THREE.Matrix4();
+    //   matrix.setPosition(x, y, 0);
+    //   sphere.setMatrixAt(i, matrix);
+    // }
 
     const torus = new THREE.Mesh(
-      new THREE.TorusGeometry(5, 1.5, 16, 100),
+      new THREE.TorusGeometry(48, 2.3, 4, 12),
       material
     );
 
-    scene.add(torus, this.batAsset);
+    scene.add(torus, this.batAsset, sphere);
 
     const canvasSizes = {
       width: window.innerWidth,
@@ -119,15 +136,26 @@ export class AppComponent implements OnInit {
 
     const animateGeometry = () => {
       const elapsedTime = clock.getElapsedTime();
+      sphere.translateX((Math.random() * 0.3) - 0.1);
+      sphere.translateY((Math.random() * 0.1) - 0.1);
 
       // Update animation objects
-      box.rotation.x = elapsedTime;
-      box.rotation.y = elapsedTime;
-      box.rotation.z = elapsedTime;
+      this.batAsset.translateX(0.02);
+      this.batAsset.translateY(0.001);
+      this.batAsset.position.z = -1;
 
-      torus.rotation.x = -elapsedTime;
-      torus.rotation.y = -elapsedTime;
-      torus.rotation.z = -elapsedTime;
+      if (this.batAsset.position.x > 120) {
+        this.batAsset.position.setX(-60)
+      }
+
+      if (sphere.position.y <= -72 || sphere.position.x > 60 || sphere.position.x < -60) {
+        sphere.position.setY(36);
+        sphere.position.setX(Math.floor(Math.random() * 90) - 45);
+      }
+
+      torus.rotation.x = 1;
+      torus.rotation.y = 2.98;
+      torus.rotation.z = elapsedTime * 0.1;
 
       // Render
       renderer.render(scene, camera);
