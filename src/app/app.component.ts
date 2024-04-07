@@ -59,15 +59,22 @@ export class AppComponent implements OnInit {
     const pointLight = new THREE.PointLight(0xff00ff, 0.5);
     pointLight.position.x = 2;
     pointLight.position.y = 2;
-    pointLight.position.z = 2;
+    pointLight.position.z = -1;
     scene.add(pointLight);
 
     this.batAsset.position.x = -60;
     this.batAsset.position.y = -8;
 
+    const materialBright = new THREE.MeshLambertMaterial({
+      color: 0x941010,
+      emissive: 0x943603,
+      emissiveIntensity: 1.3,
+      reflectivity: 2
+   });
+
     const sphere = new THREE.Mesh(
-      new THREE.SphereGeometry(0.1, 28, 28),
-      material
+      new THREE.SphereGeometry(0.2, 28, 28),
+      materialBright
     );
 
     sphere.position.setY(36);
@@ -136,6 +143,7 @@ export class AppComponent implements OnInit {
 
     const animateGeometry = () => {
       const elapsedTime = clock.getElapsedTime();
+
       sphere.translateX((Math.random() * 0.3) - 0.1);
       sphere.translateY((Math.random() * 0.1) - 0.1);
 
