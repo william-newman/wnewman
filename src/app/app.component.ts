@@ -16,14 +16,30 @@ export class AppComponent implements OnInit {
   canvas: HTMLCanvasElement;
   loadText = '';
   batAsset: any;
+  spaceBackground: any;
+
 
   ngOnInit(): void {
     // Object Loader
 
-    const loader = new GLTFLoader();
+    const backgroundLoader = new THREE.TextureLoader();
+
+    backgroundLoader.loadAsync("assets\\starry.jpg", () => {
+      // Loading
+    }).then((bkg) => {
+      this.spaceBackground = bkg;
+    }).catch((error) => {
+      console.log("background load error: " + error);
+    }).finally(() => {
+      this.batAssetLoading();
+    });
+  }
+
+  batAssetLoading(): void {
+    const batAssetLoader = new GLTFLoader();
 
     // Asyncronous asset loader with progress event as first argument
-    loader.loadAsync("assets\\bat_mki.glb", () => {
+    batAssetLoader.loadAsync("assets\\bat_mki.glb", () => {
       this.loadText = 'LOADING!';
     }).then((gltf) => {
       this.batAsset = gltf.scene;
@@ -62,6 +78,10 @@ export class AppComponent implements OnInit {
     pointLight.position.z = -1;
     scene.add(pointLight);
 
+    scene.background = this.spaceBackground;
+    scene.backgroundIntensity = 0.03;
+    scene.fog = new THREE.Fog(0xcccccc, 15, 100);
+
     this.batAsset.position.x = -60;
     this.batAsset.position.y = -8;
 
@@ -70,7 +90,7 @@ export class AppComponent implements OnInit {
       emissive: 0x943603,
       emissiveIntensity: 1.3,
       reflectivity: 2
-   });
+    });
 
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(0.2, 28, 28),
