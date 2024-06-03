@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   textGeo: any;
   textMesh: any;
   materials: any;
-  group: any;
+  loadedFont: any;
 
 
   ngOnInit(): void {
@@ -37,6 +37,22 @@ export class AppComponent implements OnInit {
       this.spaceBackground = bkg;
     }).catch((error) => {
       console.log("background load error: " + error);
+    }).finally(() => {
+      this.fontLoading();
+    });
+  }
+
+  fontLoading() {
+    // Font Loader
+
+    const fontLoader = new FontLoader();
+
+    fontLoader.loadAsync("assets\\droid_serif_regular.typeface.json", () => {
+      // Loading
+    }).then((threeFont) => {
+      this.loadedFont = threeFont;
+    }).catch((error) => {
+      console.log("Font load error: " + error);
     }).finally(() => {
       this.batAssetLoading();
     });
@@ -87,16 +103,11 @@ export class AppComponent implements OnInit {
 
     let text = 'William Newman',
 
-      bevelEnabled = true,
+      bevelEnabled = false
 
-      font = undefined,
-
-      fontName = 'optimer', // helvetiker, optimer, gentilis, droid sans, droid serif
-      fontWeight = 'bold'; // normal bold
-
-    const depth = 20,
-      size = 70,
-      hover = 30,
+    const depth = 10,
+      size = 100,
+      hover = window.innerHeight / 2.75,
 
       curveSegments = 4,
 
@@ -106,7 +117,7 @@ export class AppComponent implements OnInit {
 
     this.textGeo = new TextGeometry(text, {
 
-      font: font,
+      font: this.loadedFont,
 
       size: size,
       depth: depth,
@@ -120,30 +131,31 @@ export class AppComponent implements OnInit {
 
     this.textGeo.computeBoundingBox();
 
-    this.group = new THREE.Group();
-    this.group.position.y = 100;
-
-    const centerOffset = - 0.5 * (this.textGeo.boundingBox.max.x - this.textGeo.boundingBox.min.x);
+    const centerOffset = - 0.5 * (this.textGeo.boundingBox.max.x - this.textGeo.boundingBox.min.x);    
 
     this.materials = [
-      new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
-      new THREE.MeshPhongMaterial({ color: 0xffffff }) // side
+      new THREE.MeshPhysicalMaterial({ color: 0x69ffff, flatShading: true }), // front
+      new THREE.MeshPhongMaterial({ color: 0xff34cc }) // side
     ];
 
     this.textMesh = new THREE.Mesh(this.textGeo, this.materials);
 
+    this.textMesh.name = "TextMeshObject";
+
     this.textMesh.position.x = centerOffset;
     this.textMesh.position.y = hover;
-    this.textMesh.position.z = 0;
+    this.textMesh.position.z = -900;
 
-    this.textMesh.rotation.x = 0;
-    this.textMesh.rotation.y = Math.PI * 2;
+    // this.textMesh.rotation.x = 0;
+    // this.textMesh.rotation.y = Math.PI * 2;
 
-    this.group.add(this.textMesh);
+    scene.add(this.textMesh);
 
     scene.background = this.spaceBackground;
     scene.backgroundIntensity = 0.03;
-    scene.fog = new THREE.Fog(0xcccccc, 15, 100);
+    // scene.fog = new THREE.Fog(0xcccccc, 1, 100);
+    scene.fog = new THREE.FogExp2( 0xcccccc, 0.00025)
+    scene.fog.name = "Foggo";
 
     this.batAsset.position.x = -60;
     this.batAsset.position.y = -8;
@@ -161,18 +173,7 @@ export class AppComponent implements OnInit {
     );
 
     sphere.position.setY(36);
-
-    // Lovely meshInstance for loop
-    // for (let i = 0; i < sphere.count; i++) {
-
-    //   let x = Math.floor(Math.random() * 90) - 45;
-    //   let y = 36;
-
-    //   let matrix = new THREE.Matrix4();
-    //   matrix.setPosition(x, y, 0);
-    //   sphere.setMatrixAt(i, matrix);
-    // }
-
+    
     const torus = new THREE.Mesh(
       new THREE.TorusGeometry(48, 2.3, 4, 12),
       material
