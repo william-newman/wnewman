@@ -1,12 +1,15 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import * as THREE from "three";
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
+import { CubeComponent } from './cube/cube.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, CubeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -17,6 +20,10 @@ export class AppComponent implements OnInit {
   loadText = '';
   batAsset: any;
   spaceBackground: any;
+  textGeo: any;
+  textMesh: any;
+  materials: any;
+  group: any;
 
 
   ngOnInit(): void {
@@ -59,10 +66,10 @@ export class AppComponent implements OnInit {
       console.log(e);
       return false;
     }
-    this.createThreejsBox();
+    this.createThreejsScene();
   }
 
-  createThreejsBox(): void {
+  createThreejsScene(): void {
     const canvas = document.getElementById('canvas');
 
     const scene = new THREE.Scene();
@@ -77,6 +84,62 @@ export class AppComponent implements OnInit {
     pointLight.position.y = 2;
     pointLight.position.z = -1;
     scene.add(pointLight);
+
+    let text = 'William Newman',
+
+      bevelEnabled = true,
+
+      font = undefined,
+
+      fontName = 'optimer', // helvetiker, optimer, gentilis, droid sans, droid serif
+      fontWeight = 'bold'; // normal bold
+
+    const depth = 20,
+      size = 70,
+      hover = 30,
+
+      curveSegments = 4,
+
+      bevelThickness = 2,
+      bevelSize = 1.5;
+
+
+    this.textGeo = new TextGeometry(text, {
+
+      font: font,
+
+      size: size,
+      depth: depth,
+      curveSegments: curveSegments,
+
+      bevelThickness: bevelThickness,
+      bevelSize: bevelSize,
+      bevelEnabled: bevelEnabled
+
+    });
+
+    this.textGeo.computeBoundingBox();
+
+    this.group = new THREE.Group();
+    this.group.position.y = 100;
+
+    const centerOffset = - 0.5 * (this.textGeo.boundingBox.max.x - this.textGeo.boundingBox.min.x);
+
+    this.materials = [
+      new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }), // front
+      new THREE.MeshPhongMaterial({ color: 0xffffff }) // side
+    ];
+
+    this.textMesh = new THREE.Mesh(this.textGeo, this.materials);
+
+    this.textMesh.position.x = centerOffset;
+    this.textMesh.position.y = hover;
+    this.textMesh.position.z = 0;
+
+    this.textMesh.rotation.x = 0;
+    this.textMesh.rotation.y = Math.PI * 2;
+
+    this.group.add(this.textMesh);
 
     scene.background = this.spaceBackground;
     scene.backgroundIntensity = 0.03;
