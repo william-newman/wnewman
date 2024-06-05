@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { CubeComponent } from './cube/cube.component';
+import { MathUtils } from 'three/src/math/MathUtils';
 
 @Component({
   selector: 'app-root',
@@ -85,6 +86,49 @@ export class AppComponent implements OnInit {
     this.createThreejsScene();
   }
 
+  // Create floating name text
+  addTextMeshToScene(): THREE.Mesh {
+    let text = 'William Newman',
+
+      bevelEnabled = false
+
+    const depth = 10,
+      size = 100,
+      hover = window.innerHeight / 2.75,
+      curveSegments = 4,
+      bevelThickness = 2,
+      bevelSize = 1.5;
+
+    this.textGeo = new TextGeometry(text, {
+      font: this.loadedFont,
+      size: size,
+      depth: depth,
+      curveSegments: curveSegments,
+      bevelThickness: bevelThickness,
+      bevelSize: bevelSize,
+      bevelEnabled: bevelEnabled
+    });
+
+    this.textGeo.computeBoundingBox();
+
+    const centerOffset = - 0.5 * (this.textGeo.boundingBox.max.x - this.textGeo.boundingBox.min.x);
+
+    this.materials = [
+      new THREE.MeshPhysicalMaterial({ color: 0x69ffff, flatShading: true }), // front
+      new THREE.MeshPhongMaterial({ color: 0xff34cc }) // side
+    ];
+
+    this.textMesh = new THREE.Mesh(this.textGeo, this.materials);
+
+    this.textMesh.name = "TextMeshObject";
+
+    this.textMesh.position.x = centerOffset;
+    this.textMesh.position.y = hover;
+    this.textMesh.position.z = -900;
+
+    return this.textMesh;
+  }
+
   createThreejsScene(): void {
     const canvas = document.getElementById('canvas');
 
@@ -101,60 +145,15 @@ export class AppComponent implements OnInit {
     pointLight.position.z = -1;
     scene.add(pointLight);
 
-    let text = 'William Newman',
-
-      bevelEnabled = false
-
-    const depth = 10,
-      size = 100,
-      hover = window.innerHeight / 2.75,
-
-      curveSegments = 4,
-
-      bevelThickness = 2,
-      bevelSize = 1.5;
-
-
-    this.textGeo = new TextGeometry(text, {
-
-      font: this.loadedFont,
-
-      size: size,
-      depth: depth,
-      curveSegments: curveSegments,
-
-      bevelThickness: bevelThickness,
-      bevelSize: bevelSize,
-      bevelEnabled: bevelEnabled
-
-    });
-
-    this.textGeo.computeBoundingBox();
-
-    const centerOffset = - 0.5 * (this.textGeo.boundingBox.max.x - this.textGeo.boundingBox.min.x);    
-
-    this.materials = [
-      new THREE.MeshPhysicalMaterial({ color: 0x69ffff, flatShading: true }), // front
-      new THREE.MeshPhongMaterial({ color: 0xff34cc }) // side
-    ];
-
-    this.textMesh = new THREE.Mesh(this.textGeo, this.materials);
-
-    this.textMesh.name = "TextMeshObject";
-
-    this.textMesh.position.x = centerOffset;
-    this.textMesh.position.y = hover;
-    this.textMesh.position.z = -900;
-
-    // this.textMesh.rotation.x = 0;
-    // this.textMesh.rotation.y = Math.PI * 2;
-
-    scene.add(this.textMesh);
+    if (this.textMesh) {
+      scene.remove(this.textMesh);
+    }
+    scene.add(this.addTextMeshToScene());
 
     scene.background = this.spaceBackground;
     scene.backgroundIntensity = 0.03;
     // scene.fog = new THREE.Fog(0xcccccc, 1, 100);
-    scene.fog = new THREE.FogExp2( 0xcccccc, 0.00025)
+    scene.fog = new THREE.FogExp2(0xcccccc, 0.00025)
     scene.fog.name = "Foggo";
 
     this.batAsset.position.x = -60;
@@ -173,7 +172,7 @@ export class AppComponent implements OnInit {
     );
 
     sphere.position.setY(36);
-    
+
     const torus = new THREE.Mesh(
       new THREE.TorusGeometry(48, 2.3, 4, 12),
       material
@@ -215,6 +214,21 @@ export class AppComponent implements OnInit {
       canvasSizes.height = window.innerHeight;
 
       camera.aspect = canvasSizes.width / canvasSizes.height;
+
+      const fov = 75;
+      const planeAspectRatio = 16 / 9;
+
+      if (camera.aspect > planeAspectRatio) {
+        // window too large
+        const cameraHeight = Math.tan(MathUtils.degToRad(fov / 2));
+        const ratio = camera.aspect / planeAspectRatio;
+        const newCameraHeight = cameraHeight / ratio;
+        camera.fov = MathUtils.radToDeg(Math.atan(newCameraHeight)) * 2;
+      } else {
+        // window too narrow
+        camera.fov = fov;
+      }
+
       camera.updateProjectionMatrix();
 
       renderer.setSize(canvasSizes.width, canvasSizes.height);
