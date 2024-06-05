@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { CubeComponent } from './cube/cube.component';
-import { MathUtils } from 'three/src/math/MathUtils';
+import { MathUtils } from 'three/src/math/MathUtils.js';
 
 @Component({
   selector: 'app-root',
