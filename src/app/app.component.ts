@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
 
     const backgroundLoader = new THREE.TextureLoader();
 
-    backgroundLoader.loadAsync("assets\\starry.jpg", () => {
+    backgroundLoader.loadAsync("assets\\space_bkg_wnewman.jpg", () => {
       // Loading
     }).then((bkg) => {
       this.spaceBackground = bkg;
@@ -151,7 +151,7 @@ export class AppComponent implements OnInit {
     scene.add(this.addTextMeshToScene());
 
     scene.background = this.spaceBackground;
-    scene.backgroundIntensity = 0.03;
+    scene.backgroundIntensity = 0.1;
     // scene.fog = new THREE.Fog(0xcccccc, 1, 100);
     scene.fog = new THREE.FogExp2(0xcccccc, 0.00025)
     scene.fog.name = "Foggo";
@@ -215,7 +215,7 @@ export class AppComponent implements OnInit {
 
       camera.aspect = canvasSizes.width / canvasSizes.height;
 
-      const fov = 75;
+      const fov = 110;
       const planeAspectRatio = 16 / 9;
 
       if (camera.aspect > planeAspectRatio) {
