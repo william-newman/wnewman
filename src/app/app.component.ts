@@ -123,6 +123,7 @@ export class AppComponent implements OnInit {
 
     this.textMesh.position.x = centerOffset;
     this.textMesh.position.y = hover;
+    this.textMesh.position.z = -900;
 
     return this.textMesh;
   }
@@ -148,10 +149,8 @@ export class AppComponent implements OnInit {
     }
 
     let firstText = this.addTextMeshToScene("William");
-    firstText.position.z = -800;
-
     let lastText = this.addTextMeshToScene("Newman");
-    lastText.position.z = -1010;
+    lastText.position.y = lastText.position.y - 150;
 
     scene.add(firstText, lastText);
 
