@@ -6,6 +6,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { CubeComponent } from './cube/cube.component';
 import { MathUtils } from 'three/src/math/MathUtils.js';
+import { last } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -87,10 +88,8 @@ export class AppComponent implements OnInit {
   }
 
   // Create floating name text
-  addTextMeshToScene(): THREE.Mesh {
-    let text = 'William Newman',
-
-      bevelEnabled = false
+  addTextMeshToScene(text: string): THREE.Mesh {
+    let bevelEnabled = false
 
     const depth = 10,
       size = 100,
@@ -124,7 +123,6 @@ export class AppComponent implements OnInit {
 
     this.textMesh.position.x = centerOffset;
     this.textMesh.position.y = hover;
-    this.textMesh.position.z = -900;
 
     return this.textMesh;
   }
@@ -148,11 +146,17 @@ export class AppComponent implements OnInit {
     if (this.textMesh) {
       scene.remove(this.textMesh);
     }
-    scene.add(this.addTextMeshToScene());
+
+    let firstText = this.addTextMeshToScene("William");
+    firstText.position.z = -800;
+
+    let lastText = this.addTextMeshToScene("Newman");
+    lastText.position.z = -1010;
+
+    scene.add(firstText, lastText);
 
     scene.background = this.spaceBackground;
     scene.backgroundIntensity = 0.1;
-    // scene.fog = new THREE.Fog(0xcccccc, 1, 100);
     scene.fog = new THREE.FogExp2(0xcccccc, 0.00025)
     scene.fog.name = "Foggo";
 
