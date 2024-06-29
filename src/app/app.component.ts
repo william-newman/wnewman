@@ -7,7 +7,6 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { MainPanelComponent } from './menus/main-panel/main-panel.component';
 import { MathUtils } from 'three/src/math/MathUtils.js';
 import { last } from 'rxjs';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { CommonModule } from '@angular/common';
 
 @Component({
