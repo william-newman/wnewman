@@ -1,3 +1,5 @@
 <p id="loadText">{{ loadText }}</p>
-<app-main-panel *ngIf="displayPanelsToggle"></app-main-panel>
+<div id="component-wrapper" *ngIf="displayPanelsToggle == true">
+    <app-main-panel></app-main-panel>
+</div>
 <canvas #canvas id="canvas"></canvas>

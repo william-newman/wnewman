@@ -8,18 +8,19 @@ import { MainPanelComponent } from './menus/main-panel/main-panel.component';
 import { MathUtils } from 'three/src/math/MathUtils.js';
 import { last } from 'rxjs';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MainPanelComponent],
+  imports: [RouterOutlet, MainPanelComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
 
   @ViewChild('canvas')
-  displayPanelsToggle: boolean;
+  displayPanelsToggle = false;
   canvas: HTMLCanvasElement;
   loadText = '';
   voyagerAsset: any;
@@ -32,7 +33,6 @@ export class AppComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.displayPanelsToggle = true;
     // Object Loader
     const backgroundLoader = new THREE.TextureLoader();
 
@@ -213,7 +213,9 @@ export class AppComponent implements OnInit {
 
     const renderer = new THREE.WebGLRenderer({
       canvas: canvas,
+      antialias: true
     });
+
     renderer.setClearColor(0xe232222, 1);
     renderer.setSize(canvasSizes.width, canvasSizes.height);
 
