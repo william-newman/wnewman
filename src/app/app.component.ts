@@ -4,33 +4,36 @@ import * as THREE from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
-import { CubeComponent } from './cube/cube.component';
+import { MainPanelComponent } from './menus/main-panel/main-panel.component';
 import { MathUtils } from 'three/src/math/MathUtils.js';
 import { last } from 'rxjs';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CubeComponent],
+  imports: [RouterOutlet, MainPanelComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
 
   @ViewChild('canvas')
+  displayPanelsToggle: boolean;
   canvas: HTMLCanvasElement;
   loadText = '';
-  batAsset: any;
+  voyagerAsset: any;
   spaceBackground: any;
   textGeo: any;
   textMesh: any;
   materials: any;
   loadedFont: any;
+  pointLight: THREE.PointLight;
 
 
   ngOnInit(): void {
+    this.displayPanelsToggle = true;
     // Object Loader
-
     const backgroundLoader = new THREE.TextureLoader();
 
     backgroundLoader.loadAsync("assets\\space_bkg_wnewman.jpg", () => {
@@ -44,9 +47,8 @@ export class AppComponent implements OnInit {
     });
   }
 
+  // Font Loader
   fontLoading() {
-    // Font Loader
-
     const fontLoader = new FontLoader();
 
     fontLoader.loadAsync("assets\\droid_serif_regular.typeface.json", () => {
@@ -56,18 +58,22 @@ export class AppComponent implements OnInit {
     }).catch((error) => {
       console.log("Font load error: " + error);
     }).finally(() => {
-      this.batAssetLoading();
+      this.voyagerAssetLoading();
     });
   }
 
-  batAssetLoading(): void {
-    const batAssetLoader = new GLTFLoader();
+  voyagerAssetLoading(): void {
+    const voyagerAssetLoader = new GLTFLoader();
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/examples/jsm/libs/draco/');
+    voyagerAssetLoader.setDRACOLoader(dracoLoader);
 
     // Asyncronous asset loader with progress event as first argument
-    batAssetLoader.loadAsync("assets\\bat_mki.glb", () => {
-      this.loadText = 'LOADING!';
+    voyagerAssetLoader.loadAsync("assets\\Voyager_17.glb", () => {
+      this.loadText = 'L O A D I N G';
     }).then((gltf) => {
-      this.batAsset = gltf.scene;
+      this.voyagerAsset = gltf.scene;
     }).catch((error) => {
       this.loadText = error
       console.log("asset load error: " + error);
@@ -88,45 +94,40 @@ export class AppComponent implements OnInit {
   }
 
   // Create floating name text
-  addTextMeshToScene(text: string): THREE.Mesh {
-    let bevelEnabled = false
+  // addTextMeshToScene(text: string): THREE.Mesh {
+  //   const depth = 10,
+  //     size = 110,
+  //     hover = window.innerHeight / 2.5,
+  //     curveSegments = 4,
+  //     bevelEnabled = false;
 
-    const depth = 10,
-      size = 100,
-      hover = window.innerHeight / 2.75,
-      curveSegments = 4,
-      bevelThickness = 2,
-      bevelSize = 1.5;
+  // this.textGeo = new TextGeometry(text, {
+  //     font: this.loadedFont,
+  //     size: size,
+  //     depth: depth,
+  //     curveSegments: curveSegments,
+  //     bevelEnabled: bevelEnabled
+  // });
 
-    this.textGeo = new TextGeometry(text, {
-      font: this.loadedFont,
-      size: size,
-      depth: depth,
-      curveSegments: curveSegments,
-      bevelThickness: bevelThickness,
-      bevelSize: bevelSize,
-      bevelEnabled: bevelEnabled
-    });
+  //   this.textGeo.computeBoundingBox();
 
-    this.textGeo.computeBoundingBox();
+  //   const centerOffset = - 0.5 * (this.textGeo.boundingBox.max.x - this.textGeo.boundingBox.min.x);
 
-    const centerOffset = - 0.5 * (this.textGeo.boundingBox.max.x - this.textGeo.boundingBox.min.x);
+  //   this.materials = [
+  //     new THREE.MeshPhysicalMaterial({ color: 0x69ffff, flatShading: true }), // front
+  //     new THREE.MeshPhongMaterial({ color: 0xff34cc }) // side
+  //   ];
 
-    this.materials = [
-      new THREE.MeshPhysicalMaterial({ color: 0x69ffff, flatShading: true }), // front
-      new THREE.MeshPhongMaterial({ color: 0xff34cc }) // side
-    ];
+  //   this.textMesh = new THREE.Mesh(this.textGeo, this.materials);
 
-    this.textMesh = new THREE.Mesh(this.textGeo, this.materials);
+  //   this.textMesh.name = "TextMeshObject";
 
-    this.textMesh.name = "TextMeshObject";
+  //   this.textMesh.position.x = centerOffset;
+  //   this.textMesh.position.y = hover;
+  //   this.textMesh.position.z = -900;
 
-    this.textMesh.position.x = centerOffset;
-    this.textMesh.position.y = hover;
-    this.textMesh.position.z = -900;
-
-    return this.textMesh;
-  }
+  //   return this.textMesh;
+  // }
 
   createThreejsScene(): void {
     const canvas = document.getElementById('canvas');
@@ -135,32 +136,37 @@ export class AppComponent implements OnInit {
 
     const material = new THREE.MeshToonMaterial();
 
-    const ambientLight = new THREE.AmbientLight(0x00FFFF, 0.3);
+    const ambientLight = new THREE.AmbientLight(0xfff0f0, 1);
     scene.add(ambientLight);
-
-    const pointLight = new THREE.PointLight(0xff00ff, 0.5);
-    pointLight.position.x = 2;
-    pointLight.position.y = 2;
-    pointLight.position.z = -1;
-    scene.add(pointLight);
 
     if (this.textMesh) {
       scene.remove(this.textMesh);
     }
 
-    let firstText = this.addTextMeshToScene("William");
-    let lastText = this.addTextMeshToScene("Newman");
-    lastText.position.y = lastText.position.y - 150;
+    // let firstText = this.addTextMeshToScene("William");
+    // let lastText = this.addTextMeshToScene("Newman");
+    // lastText.position.y = lastText.position.y - 150;
 
-    scene.add(firstText, lastText);
+    // scene.add(firstText, lastText);
 
     scene.background = this.spaceBackground;
     scene.backgroundIntensity = 0.1;
-    scene.fog = new THREE.FogExp2(0xcccccc, 0.00025)
+    scene.fog = new THREE.FogExp2(0xcccccc, 0.001)
     scene.fog.name = "Foggo";
 
-    this.batAsset.position.x = -60;
-    this.batAsset.position.y = -8;
+    this.voyagerAsset.position.x = -60;
+    this.voyagerAsset.position.y = -8;
+    this.voyagerAsset.position.z = -10;
+    this.voyagerAsset.rotation.x = 82;
+    this.voyagerAsset.children[0].children[0].material.map.minfilter = THREE.LinearMipmapLinearFilter;
+    this.voyagerAsset.children[0].children[1].material.map.minfilter = THREE.LinearMipmapLinearFilter;
+    this.voyagerAsset.children[0].children[2].material.map = this.voyagerAsset.children[0].children[1].material.map;
+    
+    this.pointLight = new THREE.PointLight(0x696969, 0.8);
+    this.pointLight.position.x = this.voyagerAsset.position.x;
+    this.pointLight.position.y = this.voyagerAsset.position.y;
+    this.pointLight.position.z = this.voyagerAsset.position.z;
+    scene.add(this.pointLight);
 
     const materialBright = new THREE.MeshLambertMaterial({
       color: 0x941010,
@@ -181,7 +187,7 @@ export class AppComponent implements OnInit {
       material
     );
 
-    scene.add(torus, this.batAsset, sphere);
+    scene.add(torus, this.voyagerAsset, sphere);
 
     const canvasSizes = {
       width: window.innerWidth,
@@ -198,7 +204,6 @@ export class AppComponent implements OnInit {
     scene.add(camera);
 
     // Null check
-
     if (!canvas) {
       console.log('canvas is set as: ' + this.canvas);
       return;
@@ -249,12 +254,13 @@ export class AppComponent implements OnInit {
       sphere.translateY((Math.random() * 0.1) - 0.1);
 
       // Update animation objects
-      this.batAsset.translateX(0.02);
-      this.batAsset.translateY(0.001);
-      this.batAsset.position.z = -1;
+      this.voyagerAsset.translateX(0.02);
+      this.voyagerAsset.translateY(0.001);
+      this.pointLight.position.setX(this.voyagerAsset.position.x + 1);
+      this.pointLight.position.setY(this.voyagerAsset.position.y + 2);
 
-      if (this.batAsset.position.x > 120) {
-        this.batAsset.position.setX(-60)
+      if (this.voyagerAsset.position.x > 120) {
+        this.voyagerAsset.position.setX(-60);
       }
 
       if (sphere.position.y <= -72 || sphere.position.x > 60 || sphere.position.x < -60) {
@@ -274,5 +280,6 @@ export class AppComponent implements OnInit {
     };
 
     animateGeometry();
+    this.displayPanelsToggle = true;
   }
 }

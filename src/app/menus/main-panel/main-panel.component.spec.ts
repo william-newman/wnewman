@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CubeComponent } from './cube.component';
+import { MainPanelComponent } from './main-panel.component';
 
-describe('CubeComponent', () => {
-  let component: CubeComponent;
-  let fixture: ComponentFixture<CubeComponent>;
+describe('MainPanelComponent', () => {
+  let component: MainPanelComponent;
+  let fixture: ComponentFixture<MainPanelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CubeComponent]
+      imports: [MainPanelComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(CubeComponent);
+    fixture = TestBed.createComponent(MainPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,13 +1,15 @@
 #canvas {
-    display: block;
-    height: 100%;
-    width: 100%;
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
 #loadText {
-    position: fixed;
-    top: 1vh;
-    left: 45vw;
-    width: 10vw;
-    text-align: center;
+  font-family: "Lato", Helvetica, sans-serif;
+  color: rgba($color: #405e7a, $alpha: 1);
+  position: fixed;
+  top: 1vh;
+  width: 100%;
+  text-align: center;
+  font-size: 1vw;
 }

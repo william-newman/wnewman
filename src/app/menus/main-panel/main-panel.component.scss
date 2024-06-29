@@ -1,0 +1,50 @@
+.panel {
+  margin: auto;
+  color: white;
+}
+
+#title-panel {
+  color: rgba($color: #1a456d, $alpha: 0.8);
+  position: absolute;
+  top: 13vh;
+  width: 100%;
+  text-align: center;
+}
+
+#main-panel {
+  color: rgba($color: #1a456d, $alpha: 0.8);
+  width: 50%;
+  text-align: center;
+}
+
+@media screen and (min-width: 741px) {
+  #title-panel {
+    font-size: 5vw;
+  }
+
+  #sub-title-panel {
+    font-size: 3vw;
+  }
+
+  #main-panel {
+    position: relative;
+    top: 8vh;
+    font-size: 2vw;
+  }
+}
+
+@media screen and (max-width: 740px) {
+  #title-panel {
+    font-size: 11vw;
+  }
+
+  #sub-title-panel {
+    font-size: 7vw;
+  }
+
+  #main-panel {
+    position: relative;
+    top: 2vh;
+    font-size: 5vw;
+  }
+}
