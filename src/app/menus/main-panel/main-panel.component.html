@@ -1,11 +1,36 @@
+<!-- Main Content -->
+<!-- Title -->
 <div class="panel" id="title-panel">
   William Newman
+  <!-- Sub Title -->
   <div id="sub-title-panel">
     Software Engineer
+
+    <!-- Links and Content -->
     <div class="panel" id="main-panel">
-      !!! cool space website !!!
+      <!-- Resume Link -->
+      <a
+        href="../../../assets/William_Newman_Resume.pdf"
+        class="link"
+        id="resume-link"
+        target="_blank"
+        >My Resume</a
+      >
+      <!-- Project List -->
       <ul class="list" id="project-list">
-        <li>ngFor goes here</li>
+        Projects:
+        @for (projectLink of projectList; track $index) {
+        <li>
+          <a
+            href="{{ projectLink.websiteLink }}"
+            class="link"
+            id="project-link"
+            target="_blank"
+          >
+            {{ projectLink.name }}
+          </a>
+        </li>
+        }
       </ul>
     </div>
   </div>

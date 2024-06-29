@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { WebsiteInformation } from '../../models/website-information/website-information';
 
 @Component({
   selector: 'app-main-panel',
@@ -8,5 +9,44 @@ import { Component } from '@angular/core';
   styleUrl: './main-panel.component.scss'
 })
 export class MainPanelComponent {
+  projectList: WebsiteInformation[];
 
+  // Create constructor
+
+  ngOnInit() {
+    let datePublished = new Date;
+
+    // TODO: move all to JSON
+    const billydecaySite = {
+      name: "Personal site",
+      websiteLink: "https://billydecay.com",
+      logoURL: "",
+      description: "",
+      datePublished: datePublished,
+      codebaseLink: "github",
+      collaborators: [""]
+    }
+
+    const mcSite = {
+      name: "Artist Porfolio",
+      websiteLink: "https://killerkuff.com",
+      logoURL: "",
+      description: "",
+      datePublished: datePublished,
+      codebaseLink: "github",
+      collaborators: [""]
+    }
+
+    const authorPortfolioSite = {
+      name: "Author Portfolio",
+      websiteLink: "#",
+      logoURL: "",
+      description: "",
+      datePublished: datePublished,
+      codebaseLink: "github",
+      collaborators: [""]
+    }
+
+    this.projectList = [billydecaySite, mcSite, authorPortfolioSite];
+  }
 }

@@ -65,8 +65,10 @@ export class AppComponent implements OnInit {
   voyagerAssetLoading(): void {
     const voyagerAssetLoader = new GLTFLoader();
 
+    // Set decoder
     const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/examples/jsm/libs/draco/');
+    dracoLoader.setDecoderConfig({ type: "js" });
+    dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
     voyagerAssetLoader.setDRACOLoader(dracoLoader);
 
     // Asyncronous asset loader with progress event as first argument

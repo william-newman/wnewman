@@ -17,6 +17,10 @@
   text-align: center;
 }
 
+.list {
+    list-style-type: none;
+}
+
 @media screen and (min-width: 741px) {
   #title-panel {
     font-size: 5vw;
