@@ -13,12 +13,13 @@
 
 #main-panel {
   color: rgba($color: #1a456d, $alpha: 0.8);
-  width: 50%;
+  width: 100%;
   text-align: center;
 }
 
 .list {
     list-style-type: none;
+    padding: 0;
 }
 
 .link {

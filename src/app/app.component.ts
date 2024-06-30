@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   loadText = '';
   voyagerAsset: any;
   spaceBackground: any;
+  torusTexture: any;
   textGeo: any;
   textMesh: any;
   materials: any;
@@ -34,14 +35,22 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     // Object Loader
-    const backgroundLoader = new THREE.TextureLoader();
+    const textureLoader = new THREE.TextureLoader();
 
-    backgroundLoader.loadAsync("assets\\space_bkg_wnewman.jpg", () => {
+    textureLoader.loadAsync("assets\\space_bkg_wnewman.jpg", () => {
       // Loading
     }).then((bkg) => {
       this.spaceBackground = bkg;
     }).catch((error) => {
       console.log("background load error: " + error);
+    });
+
+    textureLoader.loadAsync("assets\\dubs.png", () => {
+      // Loading
+    }).then((texture) => {
+      this.torusTexture = texture;
+    }).catch((error) => {
+      console.log("torus texture load error: " + error);
     }).finally(() => {
       this.fontLoading();
     });
@@ -179,9 +188,14 @@ export class AppComponent implements OnInit {
 
     sphere.position.setY(36);
 
+    // Add texture to Torus material
+    const torusMaterial = new THREE.MeshBasicMaterial({
+      map: this.torusTexture,
+    });
+
     const torus = new THREE.Mesh(
       new THREE.TorusGeometry(48, 2.3, 4, 12),
-      material
+      torusMaterial
     );
 
     scene.add(torus, this.voyagerAsset, sphere);

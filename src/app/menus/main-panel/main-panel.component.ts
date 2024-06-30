@@ -18,17 +18,17 @@ export class MainPanelComponent {
 
     // TODO: move all to JSON
     const billydecaySite = {
-      name: "Personal site - currently down",
+      name: "Personal site (down)",
       websiteLink: "https://billydecay.com",
       logoURL: "",
-      description: "My website, WIP",
+      description: "My website",
       datePublished: datePublished,
       codebaseLink: "github",
       collaborators: [""]
     }
 
     const mcSite = {
-      name: "Artist Porfolio",
+      name: "Artist Porfolio (WIP)",
       websiteLink: "https://killerkuff.com",
       logoURL: "",
       description: "A portfolio website for artist Mike Cuff",
@@ -38,7 +38,7 @@ export class MainPanelComponent {
     }
 
     const authorPortfolioSite = {
-      name: "Author Portfolio",
+      name: "Author Portfolio (down)",
       websiteLink: "#",
       logoURL: "",
       description: "Defunct author website",
