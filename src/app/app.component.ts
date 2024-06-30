@@ -8,6 +8,7 @@ import { MainPanelComponent } from './menus/main-panel/main-panel.component';
 import { MathUtils } from 'three/src/math/MathUtils.js';
 import { last } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 
 @Component({
   selector: 'app-root',
@@ -63,12 +64,7 @@ export class AppComponent implements OnInit {
 
   voyagerAssetLoading(): void {
     const voyagerAssetLoader = new GLTFLoader();
-
-    // Set decoder
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderConfig({ type: "js" });
-    dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
-    voyagerAssetLoader.setDRACOLoader(dracoLoader);
+    // Possible TODO: find better decoder
 
     // Asyncronous asset loader with progress event as first argument
     voyagerAssetLoader.loadAsync("assets\\Voyager_17.glb", () => {
