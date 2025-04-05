@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
       console.log("background load error: " + error);
     });
 
-    textureLoader.loadAsync("assets\\dubs.png", () => {
+    textureLoader.loadAsync("assets\\comet-black.png", () => {
       // Loading
     }).then((texture) => {
       this.torusTexture = texture;
@@ -142,7 +142,7 @@ export class AppComponent implements OnInit {
 
     const material = new THREE.MeshToonMaterial();
 
-    const ambientLight = new THREE.AmbientLight(0xfff0f0, 1);
+    const ambientLight = new THREE.AmbientLight(0x2F203F, 1);
     scene.add(ambientLight);
 
     if (this.textMesh) {
@@ -157,7 +157,7 @@ export class AppComponent implements OnInit {
 
     scene.background = this.spaceBackground;
     scene.backgroundIntensity = 0.1;
-    scene.fog = new THREE.FogExp2(0xcccccc, 0.001)
+    scene.fog = new THREE.FogExp2(0x000000, 0.02)
     scene.fog.name = "Foggo";
 
     this.voyagerAsset.position.x = -60;
@@ -168,14 +168,14 @@ export class AppComponent implements OnInit {
     this.voyagerAsset.children[0].children[1].material.map.minfilter = THREE.LinearMipmapLinearFilter;
     this.voyagerAsset.children[0].children[2].material.map = this.voyagerAsset.children[0].children[1].material.map;
     
-    this.pointLight = new THREE.PointLight(0x696969, 0.8);
+    this.pointLight = new THREE.PointLight(0xC0C0FF, 0.64);
     this.pointLight.position.x = this.voyagerAsset.position.x;
     this.pointLight.position.y = this.voyagerAsset.position.y;
     this.pointLight.position.z = this.voyagerAsset.position.z;
     scene.add(this.pointLight);
 
     const materialBright = new THREE.MeshLambertMaterial({
-      color: 0x941010,
+      color: 0x031010,
       emissive: 0x943603,
       emissiveIntensity: 1.3,
       reflectivity: 2
@@ -194,7 +194,7 @@ export class AppComponent implements OnInit {
     });
 
     const torus = new THREE.Mesh(
-      new THREE.TorusGeometry(48, 2.3, 4, 12),
+      new THREE.TorusGeometry(64, 2.3, 24, 128),
       torusMaterial
     );
 
@@ -208,7 +208,7 @@ export class AppComponent implements OnInit {
     const camera = new THREE.PerspectiveCamera(
       75,
       canvasSizes.width / canvasSizes.height,
-      0.001,
+      1,
       1000
     );
     camera.position.z = 30;
